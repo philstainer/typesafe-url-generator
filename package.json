@@ -1,12 +1,28 @@
 {
   "name": "typesafe-url-generator",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "description": "A simple API for creating a type-safe urls",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "test": "vitest",
+    "test.types": "vitest typecheck"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "url",
+    "typescript"
+  ],
+  "author": "Phil Stainer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philstainer/typesafe-url-generator.git"
+  },
+  "devDependencies": {
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.3"
+  }
 }
