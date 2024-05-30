@@ -1,5 +1,5 @@
 import type { NonEmptyObject, OptionalParam, Prettify } from "./utils/generics";
-import { replaceUrlParams } from "./utils/replaceUrlParams";
+import { replaceUrlParams } from "./utils//replaceUrlParams";
 import { replaceUrlSearchParams } from "./utils/replaceUrlSearchParams";
 
 // --- Params
@@ -27,7 +27,7 @@ type RouteParams<Path extends string> = PathSegments<Path> extends never
 // --- Search
 type IsSearchParam<SearchParam extends string> =
   SearchParam extends `${infer ParamName}=${infer ParamValue}`
-    ? { [Key in ParamName]?: string }
+    ? { [Key in ParamName]?: string | string[] }
     : {};
 
 type SearchSegment<Path extends string> =
@@ -53,7 +53,8 @@ type GenerateUrlProps<TApi, TRequest, TPath extends string, TInclude> = {
   api: TApi;
   request: TRequest;
   includeBase?: TInclude;
-  filters?: Prettify<OptionalRouteParams<TPath>> & Record<string, string>;
+  filters?: Prettify<OptionalRouteParams<TPath>> &
+    Record<string, string | string[]>;
 } & ReplaceProp<TPath> &
   (TInclude extends false ? object : { environment?: Environment });
 
@@ -65,7 +66,7 @@ type Environments = {
   production: string;
 };
 
-type Environment = keyof Environments;
+export type Environment = keyof Environments;
 
 export type URLGeneratorConfig = Record<
   string,
@@ -77,15 +78,8 @@ export type URLGeneratorConfig = Record<
 
 export const createURLGenerator = <TConfig extends URLGeneratorConfig>(
   config: TConfig,
-  configEnvironment: Environment
+  configEnvironment: (() => Environment) | Environment
 ) => {
-  const defaultReplacementsAndFilters = {
-    replace: {},
-    filters: {},
-    environment: configEnvironment,
-    includeBase: true,
-  };
-
   const generateUrl = <
     TApi extends keyof TConfig,
     TRequest extends keyof TConfig[TApi]["requests"],
@@ -98,15 +92,22 @@ export const createURLGenerator = <TConfig extends URLGeneratorConfig>(
     request: incomingRequest,
     ...other
   }: GenerateUrlProps<TApi, TRequest, TPath, TInclude>) => {
+    const defaultReplacementsAndFilters = {
+      replace: {},
+      filters: {},
+      environment:
+        typeof configEnvironment === "function"
+          ? configEnvironment()
+          : configEnvironment,
+      includeBase: true,
+    };
+
     const { replace, filters, environment, includeBase } = {
       ...defaultReplacementsAndFilters,
       ...other,
     };
 
-    const requests = config[api]?.requests;
-
-    if (!requests) throw new Error(`API ${api.toString()} not found in config`);
-
+    const requests = config[api].requests;
     const request = requests[
       incomingRequest as keyof typeof requests
     ] as string;
@@ -114,15 +115,10 @@ export const createURLGenerator = <TConfig extends URLGeneratorConfig>(
     let url = request;
 
     if (includeBase) {
-      if (!config[api]?.environments[environment])
+      if (!config[api].environments[environment])
         throw new Error(`Environment ${environment} not found in config`);
 
-      const baseUrl = config[api]?.environments[environment];
-
-      if (!baseUrl)
-        throw new Error(
-          `Base URL not found in config for API ${api.toString()} and environment ${environment}`
-        );
+      const baseUrl = config[api].environments[environment];
 
       url = `${baseUrl}${request}`;
     }

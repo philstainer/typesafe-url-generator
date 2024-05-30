@@ -74,6 +74,12 @@ test("should require replace object and have optional filters", () => {
     request: "products",
     filters: { limit: "5", nonExistingParam: "happy" },
   });
+
+  assertType<productArgs>({
+    api: "products",
+    request: "products",
+    filters: { limit: ["1", "5"], nonExistingParam: ["i", "am", "happy"] },
+  });
 });
 
 test("should error when request doesn't exist", () => {
