@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { createURLGenerator } from "./index.js";
+import { createURLGenerator } from "./create-url-generator.js";
 import type { Environment, URLGeneratorConfig } from "./types.js";
 
 const apiConfig = {

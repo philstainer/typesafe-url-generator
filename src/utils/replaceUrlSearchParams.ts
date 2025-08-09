@@ -21,7 +21,7 @@ export const replaceUrlSearchParams = ({
 
   // Remove empty params
   [...params.entries()].forEach(([key, value]) => {
-    if (!value) params.delete(key, "");
+    if (!value) params.delete(key);
   });
 
   const searchParams = params.toString();

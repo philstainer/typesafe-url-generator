@@ -12,7 +12,7 @@ import type {
 import { replaceUrlParams } from "./utils/replaceUrlParams.js";
 import { replaceUrlSearchParams } from "./utils/replaceUrlSearchParams.js";
 
-export type ReplaceProp<TReplace, TPath extends string> = OptionalParam<
+type ReplaceProp<TReplace, TPath extends string> = OptionalParam<
   NonEmptyObject<RouteParams<TPath>>,
   { replace: Prettify<TReplace & RouteParams<TPath>> }
 >;

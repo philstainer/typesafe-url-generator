@@ -9,7 +9,7 @@ export type NonEmptyObject<T> = T extends {}
 export type OptionalParam<
   TCompare,
   TValue,
-  TReturn = object
+  TReturn = object,
 > = TCompare | null extends null ? TReturn : TValue;
 
 export type Prettify<T> = { [K in keyof T]: T[K] } & {};

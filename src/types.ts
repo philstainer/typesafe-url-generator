@@ -9,7 +9,7 @@ import type {
 
 // --- Params
 export type ParamOnly<Segment extends string> =
-  Segment extends `:${infer Param}:${infer Param2}`
+  Segment extends `:${infer Param}:${infer _Param2}`
     ? { [Key in Param]: string }
     : Segment extends `:${infer Param}`
       ? { [Key in Param]: string }
@@ -21,17 +21,24 @@ export type PathSegment<Path extends string> =
     : ParamOnly<Path>;
 
 export type PathSegments<Path extends string> =
-  Path extends `${infer SegmentA}?${infer SegmentB}`
+  Path extends `${infer SegmentA}?${infer _SegmentB}`
     ? PathSegment<SegmentA>
     : PathSegment<Path>;
 
-export type RouteParams<Path extends string> = PathSegments<Path> extends never
-  ? {}
-  : PathSegments<Path>;
+// Bail-out helper: if Path is a wide string, avoid heavy computation
+type IfLiteralString<T, WhenLiteral, Fallback> = string extends T
+  ? Fallback
+  : WhenLiteral;
+
+export type RouteParams<Path extends string> = IfLiteralString<
+  Path,
+  PathSegments<Path> extends never ? {} : PathSegments<Path>,
+  {}
+>;
 
 // --- Search
 export type IsSearchParam<SearchParam extends string> =
-  SearchParam extends `${infer ParamName}=${infer ParamValue}`
+  SearchParam extends `${infer ParamName}=${infer _ParamValue}`
     ? { [Key in ParamName]?: string | string[] }
     : {};
 
@@ -41,12 +48,15 @@ export type SearchSegment<Path extends string> =
     : IsSearchParam<Path>;
 
 export type SearchSegments<Path extends string> =
-  Path extends `${infer Url}?${infer SearchParams}`
+  Path extends `${infer _Url}?${infer SearchParams}`
     ? SearchSegment<SearchParams>
     : never;
 
-export type OptionalRouteParams<Path extends string> =
-  SearchSegments<Path> extends never ? {} : SearchSegments<Path>;
+export type OptionalRouteParams<Path extends string> = IfLiteralString<
+  Path,
+  SearchSegments<Path> extends never ? {} : SearchSegments<Path>,
+  {}
+>;
 
 // --- Props
 export type ReplaceProp<TPath extends string> = OptionalParam<
@@ -105,17 +115,27 @@ type ReplaceAllOnce<
     ? `${H}${V}${T}`
     : S;
 
+// Limit recursion depth to keep checker responsive
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 type ReplaceAll<
   S extends string,
   K extends string,
   V extends string,
-> = S extends `${string}:${K}:${string}` | `${string}:${K}${string}`
-  ? ReplaceAll<ReplaceAllOnce<S, K, V>, K, V>
-  : S;
+  D extends number = 6,
+> = D extends 0
+  ? S
+  : S extends `${string}:${K}:${string}` | `${string}:${K}${string}`
+    ? ReplaceAll<ReplaceAllOnce<S, K, V>, K, V, Prev[D]>
+    : S;
 
-type Entries<R extends Record<string, string>> = {
-  [K in keyof R]-?: [K & string, R[K] & string];
-}[keyof R];
+// Avoid exploding when keys are unknown (generic Record)
+type KnownKeys<T> = string extends keyof T ? never : keyof T;
+
+type Entries<R extends Record<string, string>> = KnownKeys<R> extends never
+  ? never
+  : {
+      [K in KnownKeys<R>]-?: [K & string, R[K] & string];
+    }[KnownKeys<R>];
 
 type ReplaceEntries<S extends string, E> = [E] extends [never]
   ? S
@@ -126,9 +146,13 @@ type ReplaceEntries<S extends string, E> = [E] extends [never]
 type ReplaceInPath<
   TUrl extends string,
   TReplace extends Record<string, string>,
-> = TUrl extends `${infer P}?${infer QS}`
-  ? `${ReplaceEntries<P, Entries<TReplace>>}?${QS}`
-  : ReplaceEntries<TUrl, Entries<TReplace>>;
+> = string extends TUrl
+  ? TUrl
+  : KnownKeys<TReplace> extends never
+    ? TUrl
+    : TUrl extends `${infer P}?${infer QS}`
+      ? `${ReplaceEntries<P, Entries<TReplace>>}?${QS}`
+      : ReplaceEntries<TUrl, Entries<TReplace>>;
 
 export type FinalUrl<
   TUrl extends string,

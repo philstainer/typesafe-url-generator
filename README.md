@@ -8,6 +8,21 @@ You can install this package via running `npm install typesafe-url-generator` in
 
 ## Example Usage
 
+### Quick usage
+```js
+import { qUrl } from 'typesafe-url-generator'
+
+const url = "https://my-url.com/api/users/:id?foo=123" // url-config.ts
+const myUrl = qUrl({
+  url,
+  replace: {id: "123"}, // <- Auto Complete (type -> {id: string})
+  filters: {foo: "bar"} // <- Auto Complete (type -> {foo: string})
+})
+// type -> const myUrl: "https://my-url.com/api/users/123"
+// return -> "https://my-url.com/api/users/123?foo=bar"
+```
+
+### Full usage
 ```js
 // apiConfig.ts
 import { createURLGenerator, type URLGeneratorConfig } from 'typesafe-url-generator';

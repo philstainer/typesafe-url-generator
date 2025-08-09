@@ -2,7 +2,7 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   format: ["esm"],
-  entryPoints: ["src/index.ts", "src/generate-url.ts"],
+  entryPoints: ["src/index.ts", "src/create-url-generator.ts", "src/q-url.ts"],
   clean: true,
   dts: true,
   splitting: true,
