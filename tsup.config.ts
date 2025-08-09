@@ -7,4 +7,5 @@ export default defineConfig({
   dts: true,
   splitting: true,
   treeshake: true,
+  minify: false,
 });
