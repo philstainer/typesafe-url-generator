@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { replaceUrlSearchParams } from "./replaceUrlSearchParams";
+import { replaceUrlSearchParams } from "./replaceUrlSearchParams.js";
 
 const baseUrl = "https://example.com";
 

@@ -4,7 +4,7 @@ import {
   createURLGenerator,
   type Environment,
   type URLGeneratorConfig,
-} from "./";
+} from "./index.js";
 
 const apiConfig = {
   products: {

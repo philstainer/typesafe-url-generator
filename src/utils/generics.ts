@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/complexity/noBannedTypes: It works as expected */
+
 export type NonEmptyObject<T> = T extends {}
   ? keyof T extends never
     ? never

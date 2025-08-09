@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { replaceUrlParams } from "./replaceUrlParams";
+import { replaceUrlParams } from "./replaceUrlParams.js";
 
 const baseUrl = "https://example.com";
 

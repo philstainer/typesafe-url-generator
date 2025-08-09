@@ -1,9 +1,17 @@
 {
   "name": "typesafe-url-generator",
   "version": "1.1.0",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "description": "A simple API for creating a type-safe urls",
   "scripts": {
     "build": "tsup",
@@ -22,6 +30,7 @@
     "url": "https://github.com/philstainer/typesafe-url-generator.git"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.4",
     "@changesets/cli": "^2.26.2",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
@@ -30,5 +39,6 @@
   "engines": {
     "pnpm": ">=8",
     "node": ">=18"
-  }
+  },
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
 }

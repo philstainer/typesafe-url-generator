@@ -1,6 +1,9 @@
-import type { NonEmptyObject, OptionalParam, Prettify } from "./utils/generics";
-import { replaceUrlParams } from "./utils//replaceUrlParams";
-import { replaceUrlSearchParams } from "./utils/replaceUrlSearchParams";
+/** biome-ignore-all lint/correctness/noUnusedVariables: We want to ignore unused variables in this file */
+/** biome-ignore-all lint/complexity/noBannedTypes: It works as expected */
+
+import type { NonEmptyObject, OptionalParam, Prettify } from "./utils/generics.js";
+import { replaceUrlParams } from "./utils//replaceUrlParams.js";
+import { replaceUrlSearchParams } from "./utils/replaceUrlSearchParams.js";
 
 // --- Params
 type ParamOnly<Segment extends string> =
