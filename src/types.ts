@@ -80,3 +80,57 @@ export type URLGeneratorConfig = Record<
     requests: Record<string, string>;
   }
 >;
+
+export type RemoveSearchParams<T> = T extends `${infer Base}?${infer _Rest}`
+  ? Base
+  : T;
+
+type TrimLeft<S extends string> = S extends ` ${infer R}` ? TrimLeft<R> : S;
+type TrimRight<S extends string> = S extends `${infer R} ` ? TrimRight<R> : S;
+type Trim<S extends string> = TrimLeft<TrimRight<S>>;
+
+type EncodeSpaces<S extends string> = S extends `${infer H} ${infer T}`
+  ? `${EncodeSpaces<H>}%20${EncodeSpaces<T>}`
+  : S;
+
+type Sanitize<V extends string> = EncodeSpaces<Trim<V>>;
+
+type ReplaceAllOnce<
+  S extends string,
+  K extends string,
+  V extends string,
+> = S extends `${infer H}:${K}:${infer T}`
+  ? `${H}${V}${T}`
+  : S extends `${infer H}:${K}${infer T}`
+    ? `${H}${V}${T}`
+    : S;
+
+type ReplaceAll<
+  S extends string,
+  K extends string,
+  V extends string,
+> = S extends `${string}:${K}:${string}` | `${string}:${K}${string}`
+  ? ReplaceAll<ReplaceAllOnce<S, K, V>, K, V>
+  : S;
+
+type Entries<R extends Record<string, string>> = {
+  [K in keyof R]-?: [K & string, R[K] & string];
+}[keyof R];
+
+type ReplaceEntries<S extends string, E> = [E] extends [never]
+  ? S
+  : E extends [infer K extends string, infer V extends string]
+    ? ReplaceEntries<ReplaceAll<S, K, Sanitize<V>>, Exclude<E, [K, V]>>
+    : S;
+
+type ReplaceInPath<
+  TUrl extends string,
+  TReplace extends Record<string, string>,
+> = TUrl extends `${infer P}?${infer QS}`
+  ? `${ReplaceEntries<P, Entries<TReplace>>}?${QS}`
+  : ReplaceEntries<TUrl, Entries<TReplace>>;
+
+export type FinalUrl<
+  TUrl extends string,
+  TReplace extends Record<string, string>,
+> = ReplaceInPath<TUrl, TReplace>;

@@ -6,6 +6,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./q-url": {
+      "types": "./dist/q-url.d.ts",
+      "import": "./dist/q-url.js"
     }
   },
   "sideEffects": false,
@@ -15,8 +19,10 @@
   "description": "A simple API for creating a type-safe urls",
   "scripts": {
     "build": "tsup",
-    "test": "vitest",
-    "test.types": "vitest typecheck",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch",
+    "test.types": "vitest --typecheck.enabled --run",
+    "test.types:watch": "vitest --typecheck.enabled --watch",
     "release": "pnpm run build && changeset publish"
   },
   "keywords": [
