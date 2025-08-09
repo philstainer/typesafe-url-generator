@@ -1,10 +1,7 @@
 import { expect, test } from "vitest";
 
-import {
-  createURLGenerator,
-  type Environment,
-  type URLGeneratorConfig,
-} from "./index.js";
+import { createURLGenerator } from "./index.js";
+import type { Environment, URLGeneratorConfig } from "./types.js";
 
 const apiConfig = {
   products: {
@@ -75,7 +72,7 @@ test("should generate the correct URL for a products request with filters and re
     replace: { id: "123" },
   });
   expect(url).toBe(
-    "http://localhost:5000/products/123/list?limit=5&search=test"
+    "http://localhost:5000/products/123/list?limit=5&search=test",
   );
 });
 
@@ -87,7 +84,7 @@ test("should generate the correct URL for a products request when passing an arr
     replace: { id: "123" },
   });
   expect(url).toBe(
-    "http://localhost:5000/products/123/list?limit=5&search=test&sort=1&sort=2&sort=3"
+    "http://localhost:5000/products/123/list?limit=5&search=test&sort=1&sort=2&sort=3",
   );
 });
 
@@ -104,7 +101,7 @@ test("should generate the correct URL for the current environment when using a g
   });
 
   expect(url).toBe(
-    "http://localhost:5000/products/123/list?limit=5&search=test"
+    "http://localhost:5000/products/123/list?limit=5&search=test",
   );
 
   environment = "development";

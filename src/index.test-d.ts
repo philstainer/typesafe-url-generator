@@ -1,6 +1,7 @@
 import { assertType, test } from "vitest";
 
-import { createURLGenerator, type URLGeneratorConfig } from "./index.js";
+import { createURLGenerator } from "./index.js";
+import type { URLGeneratorConfig } from "./types.js";
 
 const apiConfig = {
   products: {
